@@ -1,25 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useReducer, useEffect } from 'react'
+import { Canvas } from 'react-three-fiber'
+import Rubiks from './components/Rubiks'
+import { AppStateContext, AppDispatchContext, DefaultState, reducer } from './State/context'
+
+
 
 function App() {
+
+  const [state, dispatch] = useReducer(reducer, DefaultState);
+  /* 
+  const context = useMemo(() => {
+	  return {state, dispatch}
+  }, [state, dispatch])
+  */
+
+  useEffect(() => {
+	//document.addEventListener('keydown', (e) => { dispatch({ type: e.key, payload: true })});
+	//document.addEventListener('keyup', (e) => { dispatch({ type: e.key, payload: false })});
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	<AppStateContext.Provider value={state}>
+		<AppDispatchContext.Provider value={dispatch}>
+		<div className="App">
+			<header className="App-header">
+				<Canvas>
+					<ambientLight />
+					<pointLight position={[10, 10, 10]} />
+					<Rubiks space="1.2"/>
+				</Canvas>
+			</header>
+		</div>
+		</AppDispatchContext.Provider>
+	</AppStateContext.Provider>
+  )
 }
 
 export default App;
