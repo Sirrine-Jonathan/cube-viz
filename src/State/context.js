@@ -46,8 +46,8 @@ export const reducer = (state, action) => {
 			switch(action.payload){
 				case 'f':
 				case 'F':
-				case 'd':
-				case 'D':
+				case 'b':
+				case 'B':
 				case 's':
 				case 'S':
 					newFaceConfig = 0;

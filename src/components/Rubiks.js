@@ -29,18 +29,9 @@ function Rubiks({ space }){
 
 	return (
 		<group ref={block} position={[0,0,0]} rotation={[0.4,-0.5,0]} castShadow>
-
-			{/* FACE CONFIG MAP */}
-			{/* 1, 2, 3 */}
-
-			{/* Back Face,  */}
-			<Face space={space} offset="-1" color="blue" type={state.faceConfig} faceID={0} />
-
-			{/* Middle Face,  */}
-			<Face space={space} offset="0" color="yellow" type={state.faceConfig} faceID={1} />
-
-			{/* Front Face,  */}
-			<Face space={space} offset="1" color="red" type={state.faceConfig} faceID={2} />
+			<Face space={space} offset="-1" color="red" type={state.faceConfig} faceID={0} />
+			<Face space={space} offset="0" color="white" type={state.faceConfig} faceID={1} />
+			<Face space={space} offset="1" color="green" type={state.faceConfig} faceID={2} />
 
 		</group>
 	)
