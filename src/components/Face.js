@@ -1,11 +1,51 @@
-import React from 'react'
+import React, {useContext, useState, useRef} from 'react'
 import Cube from './Cube'
+import { Math } from 'three'
 import { useFrame } from 'react-three-fiber'
+import { AppDispatchContext, AppStateContext } from '../State/context'
 
-function Face({ offset, space, color, type}){
+function Face({ offset, space, color, type, faceID}){
 
+	const mesh = useRef()
+	const [partMoving, setPartMoving] = useState(false);
+	const [lastMoveVal, setLastMoveVal] = useState(null);
+	const dispatch = useContext(AppDispatchContext);
+	const state  = useContext(AppStateContext);
 
 	useFrame(() => {
+		if (state.moving){
+			/*
+			const moves = [
+				'u', 'l', 'f', 'r', 'b', 'd', // clockwise
+				'U', 'L', 'F', 'R', 'B', 'D', // counter clockwise
+				'm', 'M', 'e', 'E', 's', 'S', // slice turns
+			];
+			*/
+			if (state.move === 'f' && faceID === 2){
+				console.log('part is moving');
+				if (!partMoving){
+					setLastMoveVal(Math.radToDeg(mesh.current.rotation.x));
+					setPartMoving(true);
+				} else {
+					mesh.current.rotation.z += Math.degToRad(5);
+					
+					console.log({
+						lastMoveVal: Math.radToDeg(mesh.current.rotation.x),
+						stopper: Math.radToDeg(mesh.current.rotation.x) + 90,
+						currentMoveVale: Math.radToDeg(mesh.current.rotation.z),
+					})
+					let limit = Math.radToDeg(lastMoveVal) + 90; //(lastMoveVal + (90 * (Math.PI / 180)));
+					if (Math.radToDeg(mesh.current.rotation.z)>= limit){
+						if (Math.radToDeg(mesh.current.rotation.z) >= limit){
+							mesh.current.rotation.z = Math.degToRad(limit);
+						}
+						setPartMoving(false);
+						setLastMoveVal(Math.radToDeg(mesh.current.rotation.x));
+						dispatch({ type: 'endMove' });
+					}
+				}
+			}
+		}
 		//mesh.current.rotation.x = mesh.current.rotation.y += 0.01
 	})
 
@@ -29,8 +69,6 @@ function Face({ offset, space, color, type}){
 				cubes.push(<Cube position={pos} color={color}/>);
 			}
 		}
-		
-		
 		return cubes
 	}
 	
@@ -55,12 +93,10 @@ function Face({ offset, space, color, type}){
 		}
 	}
 
-
-
 	return (
-		<>
+		<group ref={mesh}>
 			{getCubes()}
-		</>
+		</group>
 	)
 }
 

@@ -4,7 +4,7 @@ import { AppStateContext } from '../State/context'
 function TopBar(){
 	const state = useContext(AppStateContext);
 	return (
-		<div>type: {state.faceConfig}</div>
+		<div>type: {state.move}</div>
 	)
 }
 

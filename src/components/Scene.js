@@ -1,16 +1,19 @@
 import React, { useContext } from 'react'
 import { Canvas } from 'react-three-fiber'
 import Rubiks from './Rubiks'
-import { AppStateContext } from '../State/context'
+import { AppDispatchContext, AppStateContext } from '../State/context'
 
 function Scene(){
 	const v = useContext(AppStateContext);
+	const d = useContext(AppDispatchContext);
 	return (
 		<Canvas>
 			<AppStateContext.Provider value={v}>
-				<ambientLight />
-				<pointLight position={[10, 10, 10]} />
-				<Rubiks space="1.2"/>
+				<AppDispatchContext.Provider value={d}>
+					<ambientLight />
+					<pointLight position={[10, 10, 10]} castShadow/>
+					<Rubiks space="1.01" />
+				</AppDispatchContext.Provider>
 			</AppStateContext.Provider>
 		</Canvas>
 	)
