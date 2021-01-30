@@ -5,6 +5,7 @@ export const DefaultState = {
 	ArrowUp: false,
 	ArrowLeft: false,
 	ArrowRight: false,
+	faceConfig: 0
 }
 
 export const reducer = (state, action) => {
@@ -29,6 +30,11 @@ export const reducer = (state, action) => {
 				...state,
 				[action.type]: action.payload
 			};
+		case 'faceConfig':
+			return {
+				...state,
+				faceConfig: action.payload
+			}
 		default:
 	}
 	return state;

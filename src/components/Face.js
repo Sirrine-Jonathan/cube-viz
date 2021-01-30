@@ -19,23 +19,26 @@ function Face({ offset, space, color, type}){
 		}
 		return cubes
 	}
-
+	
 	const getCubesTypeOne = () => {
 		let cubes = [];
 		for (let n = -1; n < 2; n++){
 			for (let i = -1; i < 2; i++){
-				let pos = [i, n, offset].map(e => e * space);
+				let pos = [n, offset, i].map(e => e * space);
+				console.log(pos);
 				cubes.push(<Cube position={pos} color={color}/>);
 			}
 		}
+		
+		
 		return cubes
 	}
-
-	const getCubesTypeTwo= () => {
+	
+	const getCubesTypeTwo = () => {
 		let cubes = [];
 		for (let n = -1; n < 2; n++){
 			for (let i = -1; i < 2; i++){
-				let pos = [i, n, offset].map(e => e * space);
+				let pos = [offset, i, n].map(e => e * space);
 				cubes.push(<Cube position={pos} color={color}/>);
 			}
 		}
