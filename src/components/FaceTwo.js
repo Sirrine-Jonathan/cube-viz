@@ -4,7 +4,7 @@ import { Math } from 'three'
 import { useFrame } from 'react-three-fiber'
 import { AppDispatchContext, AppStateContext } from '../State/context'
 
-function Face({ offset, space, color, type, faceID}){
+function Face({ offset, type, space, color, faceID, idOffset}){
 
 	const mesh = useRef()
 	const [partMoving, setPartMoving] = useState(false);
@@ -71,10 +71,10 @@ function Face({ offset, space, color, type, faceID}){
 		for (let n = -1; n < 2; n++){
 			for (let i = -1; i < 2; i++){
 				let pos = [offset, i, n].map(e => e * space);
-				cubes.push(<Cube position={pos} color={color}/>);
+				cubes.push({pos, color});
 			}
 		}
-		return cubes
+		return cubes.map((obj, ind) => <Cube type={type} position={obj.pos} color={obj.color} colorID={ind + (idOffset * 9)} />);
 	}
 
 	return (

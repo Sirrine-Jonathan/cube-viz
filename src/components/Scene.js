@@ -12,7 +12,7 @@ function Scene(){
 				<AppDispatchContext.Provider value={d}>
 					<ambientLight />
 					<pointLight position={[10, 10, 10]} castShadow/>
-					<Rubiks space="1.01" />
+					<Rubiks space="1.005" />
 				</AppDispatchContext.Provider>
 			</AppStateContext.Provider>
 		</Canvas>
