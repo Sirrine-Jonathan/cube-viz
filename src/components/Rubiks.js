@@ -28,11 +28,10 @@ function Rubiks({ space }){
 	})
 
 	return (
-		<group ref={block} position={[0,0,0]} rotation={[0.4,-0.5,0]} castShadow>
-			<Face space={space} offset="-1" idOffset={0} color="red" type={state.faceConfig} faceID={0} />
-			<Face space={space} offset="0" idOffset={1} color="white" type={state.faceConfig} faceID={1} />
-			<Face space={space} offset="1" idOffset={2} color="green" type={state.faceConfig} faceID={2} />
-
+		<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
+			<Face space={space} offset="-1" idOffset={0} type={state.faceConfig} faceID={0} />
+			<Face space={space} offset="0"  idOffset={1} type={state.faceConfig} faceID={1} />
+			<Face space={space} offset="1"  idOffset={2} type={state.faceConfig} faceID={2} />
 		</group>
 	)
 }

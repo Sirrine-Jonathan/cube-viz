@@ -55,7 +55,7 @@ function App() {
 		<AppStateContext.Provider value={context.state}>
 			<AppDispatchContext.Provider value={context.dispatch}>
 			<div className="App">
-				<TopBar />
+				{/* <TopBar /> */}
 				<header className="App-header">
 					<Scene />
 				</header>

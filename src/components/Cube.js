@@ -1,6 +1,7 @@
 /* eslint-disable default-case */
 import React from 'react'
 import './ColorMaterial'
+import { RoundedBox } from 'drei';
 
 function Cube(props) {
 
@@ -83,12 +84,13 @@ function Cube(props) {
 			arr[5] = "orange"
 		}
 
-		return arr.map(color => <meshStandardMaterial attachArray="material" color={colorMap[color]} />);
+		return arr.map(color => <meshLambertMaterial attachArray="material" color={colorMap[color]} />);
 	}
 
 	return (
 	<mesh
 		{...props}
+		castShadow
 	>
 		<boxBufferGeometry args={[1, 1, 1]} />
 		{ getColoredSides(props.colorID) }
