@@ -28,7 +28,61 @@ export const DefaultState = {
 			1: 0, // x rotation
 			2: 0  // x rotation
 		}
-	}
+	},
+	positions: [
+		0,1,2,
+		3,4,5,
+		6,7,8,
+
+		9,10,11,
+		12,13,14,
+		15,16,17,
+
+		18,19,20,
+		21,22,23,
+		24,25,26
+	],
+	positionMap: [
+		[
+			24, 25, 26,
+			21, 22, 23,
+			18, 19, 20,
+			
+			15, 16, 17,
+			12, 13, 14,
+			9, 10, 11,
+		
+			6, 7, 8,
+			3, 4, 5,
+			0, 1, 2
+		],
+		[
+			20,23,26,
+			11,14,17,
+			2,5,8,
+		
+			19,22,25,
+			10,13,16,
+			1,4,7,
+		
+			18,21,24,
+			9,12,15,
+			0,3,6
+		],
+		[
+			8,17,26,
+			7,16,25,
+			6,15,24,
+		
+			5,14,23,
+			4,13,22,
+			3,12,21,
+		
+			2,11,20,
+			1,10,19,
+			0,9,18
+		]
+	]
 }
 
 export const reducer = (state, action) => {
@@ -62,30 +116,84 @@ export const reducer = (state, action) => {
 
 			// update faceConfig to appropriate move
 			let newFaceConfig;
+			let n = Array.from(state.positions);
+			let nn = Array.from(state.positions);
 
 			// eslint-disable-next-line default-case
 			switch(action.payload){
 				case 'f':
+					newFaceConfig = 0;
+					nn[0] = n[6];
+					nn[1] = n[3];
+					nn[2] = n[0];
+
+					nn[3] = n[7];
+					nn[4] = n[4];
+					nn[5] = n[1];
+
+					nn[6] = n[8];
+					nn[7] = n[5];
+					nn[8] = n[2];
+				break;
 				case 'F':
+					newFaceConfig = 0;
+					nn[6] = n[0];
+					nn[3] = n[1];
+					nn[0] = n[2];
+
+					nn[7] = n[3];
+					nn[4] = n[4];
+					nn[1] = n[5];
+					
+					nn[8] = n[6];
+					nn[5] = n[7];
+					nn[2] = n[8];
+				break;
 				case 'b':
+					newFaceConfig = 0;
+				break;
 				case 'B':
+					newFaceConfig = 0;
+				break;
 				case 's':
+					newFaceConfig = 0;
+				break;
 				case 'S':
 					newFaceConfig = 0;
 				break;
 				case 'u':
+					newFaceConfig = 1;
+				break;
 				case 'U':
+					newFaceConfig = 1;
+				break;
 				case 'd':
+					newFaceConfig = 1;
+				break;
 				case 'D':
+					newFaceConfig = 1;
+				break;
 				case 'e':
+					newFaceConfig = 1;
+				break;
 				case 'E':
 					newFaceConfig = 1;
 				break;
 				case 'l':
+					newFaceConfig = 2;
+				break;
 				case 'L':
+					newFaceConfig = 2;
+				break;
 				case 'r':
+					newFaceConfig = 2;
+				break;
 				case 'R':
+					newFaceConfig = 2;
+				break;
 				case 'm':
+					newFaceConfig = 2;
+				break;
 				case 'M':
 					newFaceConfig = 2;
 				break;
@@ -97,7 +205,8 @@ export const reducer = (state, action) => {
 				...state,
 				moving: true,
 				move: action.payload,
-				faceConfig: newFaceConfig
+				faceConfig: newFaceConfig,
+				positions: nn
 			}
 		case 'endMove':
 			console.log('ending move');

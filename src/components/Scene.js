@@ -55,7 +55,7 @@ function Scene(){
 						<h1>Cube Visualizer</h1>
 						<h4>By Jonathan Sirrine</h4>
 					</Html>
-					<Rubiks space="1.04" />
+					<Rubiks space="1.5" />
 					<Plane
 						receiveShadow
 						rotation={[-Math.PI / 2, 0, 0]}
