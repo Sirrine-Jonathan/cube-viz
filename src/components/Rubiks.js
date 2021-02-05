@@ -32,7 +32,6 @@ function Rubiks({ space }){
 		if (state.moving){
 			// face config zero operations
 			if (state.move === 'f'){
-				console.log('pressed f');
 				rotateFace(false, 0, 2);
 			}
 			if (state.move === 'F'){

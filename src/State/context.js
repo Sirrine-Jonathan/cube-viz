@@ -1,5 +1,6 @@
 /* eslint-disable no-duplicate-case */
 import React from 'react'
+import { rotatef, rotateF } from '../Util/Rotations';
 
 export const DefaultState = {
 	ArrowDown: false,
@@ -118,36 +119,19 @@ export const reducer = (state, action) => {
 			let newFaceConfig;
 			let n = Array.from(state.positions);
 			let nn = Array.from(state.positions);
+			let newPositionMap = Array.from(state.positionMap);
 
 			// eslint-disable-next-line default-case
 			switch(action.payload){
 				case 'f':
 					newFaceConfig = 0;
-					nn[0] = n[6];
-					nn[1] = n[3];
-					nn[2] = n[0];
-
-					nn[3] = n[7];
-					nn[4] = n[4];
-					nn[5] = n[1];
-
-					nn[6] = n[8];
-					nn[7] = n[5];
-					nn[8] = n[2];
+					nn = rotatef(n);
+					newPositionMap[0] = rotateF(newPositionMap[0]);
 				break;
 				case 'F':
 					newFaceConfig = 0;
-					nn[6] = n[0];
-					nn[3] = n[1];
-					nn[0] = n[2];
-
-					nn[7] = n[3];
-					nn[4] = n[4];
-					nn[1] = n[5];
-					
-					nn[8] = n[6];
-					nn[5] = n[7];
-					nn[2] = n[8];
+					nn = rotateF(n);
+					newPositionMap[0] = rotatef(newPositionMap[0]);
 				break;
 				case 'b':
 					newFaceConfig = 0;
@@ -206,7 +190,8 @@ export const reducer = (state, action) => {
 				moving: true,
 				move: action.payload,
 				faceConfig: newFaceConfig,
-				positions: nn
+				positions: nn,
+				positionMap: newPositionMap
 			}
 		case 'endMove':
 			console.log('ending move');
