@@ -15,7 +15,6 @@ function App() {
 	}, [state, dispatch])
 
 	const turnKeyOn = (e) => {
-		console.log(`key: ${e.key}`);
 
 		if (e.key.includes('Arrow')){
 			dispatch({ type: e.key, payload: true });

@@ -9,6 +9,26 @@ export const DefaultState = {
 	faceConfig: 0,
 	move: null,
 	moving: false,
+	rotations: {
+		// face configuration type Zero
+		0: {
+			0: 0, // faceID zero z rotation
+			1: 0, // faceID one z rotation
+			2: 0  // faceID two z rotation
+		},
+		// face configuration type One
+		1: {
+			0: 0, // y rotation
+			1: 0, // y rotation
+			2: 0  // y rotation
+		},
+		// face configuration type Two
+		2: {
+			0: 0, // x rotation
+			1: 0, // x rotation
+			2: 0  // x rotation
+		}
+	}
 }
 
 export const reducer = (state, action) => {
@@ -42,6 +62,7 @@ export const reducer = (state, action) => {
 
 			// update faceConfig to appropriate move
 			let newFaceConfig;
+
 			// eslint-disable-next-line default-case
 			switch(action.payload){
 				case 'f':
@@ -79,9 +100,22 @@ export const reducer = (state, action) => {
 				faceConfig: newFaceConfig
 			}
 		case 'endMove':
+			console.log('ending move');
 			return {
 				...state,
 				moving: false
+			}
+		case 'setRotations':
+			let newRotations = { 
+				...state.rotations, 
+				[action.payload[0]]: {
+					...state.rotations[action.payload[0]],
+					[action.payload[1]]: action.payload[2] 
+				}
+			};
+			return {
+				...state,
+				rotations: newRotations
 			}
 		default:
 	}
