@@ -4,7 +4,6 @@ import { Math } from 'three'
 
 function Face({ offset, type, space, idOffset, rotation}){
 
-
 	const getCubes = () => {
 		let cubes = [];
 		for (let n = -1; n < 2; n++){

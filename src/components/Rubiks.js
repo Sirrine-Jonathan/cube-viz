@@ -120,9 +120,11 @@ function Rubiks({ space }){
 			if (check){
 				newVal = limit;
 				setPartMoving(false);
+				dispatch({ type: 'setRotations', payload: [faceConfig, faceID, newVal] });
 				dispatch({ type: 'endMove' });
+			} else {
+				dispatch({ type: 'setRotations', payload: [faceConfig, faceID, newVal] });
 			}
-			dispatch({ type: 'setRotations', payload: [faceConfig, faceID, newVal] });
 		}
 	}
 

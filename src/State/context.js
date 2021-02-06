@@ -1,6 +1,6 @@
 /* eslint-disable no-duplicate-case */
 import React from 'react'
-import { rotatef, rotateF } from '../Util/Rotations';
+import { moves } from '../Util/Rotations';
 
 export const DefaultState = {
 	ArrowDown: false,
@@ -43,6 +43,7 @@ export const DefaultState = {
 		21,22,23,
 		24,25,26
 	],
+	cubeRotations: Array(27).fill([0,0,0]),
 	positionMap: [
 		[
 			24, 25, 26,
@@ -114,90 +115,26 @@ export const reducer = (state, action) => {
 				faceConfig: action.payload
 			}
 		case 'move':
-
 			// update faceConfig to appropriate move
-			let newFaceConfig;
-			let n = Array.from(state.positions);
-			let nn = Array.from(state.positions);
-			let newPositionMap = Array.from(state.positionMap);
-
-			// eslint-disable-next-line default-case
-			switch(action.payload){
-				case 'f':
-					newFaceConfig = 0;
-					nn = rotatef(n);
-					newPositionMap[0] = rotateF(newPositionMap[0]);
-				break;
-				case 'F':
-					newFaceConfig = 0;
-					nn = rotateF(n);
-					newPositionMap[0] = rotatef(newPositionMap[0]);
-				break;
-				case 'b':
-					newFaceConfig = 0;
-				break;
-				case 'B':
-					newFaceConfig = 0;
-				break;
-				case 's':
-					newFaceConfig = 0;
-				break;
-				case 'S':
-					newFaceConfig = 0;
-				break;
-				case 'u':
-					newFaceConfig = 1;
-				break;
-				case 'U':
-					newFaceConfig = 1;
-				break;
-				case 'd':
-					newFaceConfig = 1;
-				break;
-				case 'D':
-					newFaceConfig = 1;
-				break;
-				case 'e':
-					newFaceConfig = 1;
-				break;
-				case 'E':
-					newFaceConfig = 1;
-				break;
-				case 'l':
-					newFaceConfig = 2;
-				break;
-				case 'L':
-					newFaceConfig = 2;
-				break;
-				case 'r':
-					newFaceConfig = 2;
-				break;
-				case 'R':
-					newFaceConfig = 2;
-				break;
-				case 'm':
-					newFaceConfig = 2;
-				break;
-				case 'M':
-					newFaceConfig = 2;
-				break;
-				default:
-					newFaceConfig = state.faceConfig
-			}
-
+			let newFaceConfig = moves[action.payload].faceConfig;
 			return {
 				...state,
 				moving: true,
 				move: action.payload,
 				faceConfig: newFaceConfig,
-				positions: nn,
-				positionMap: newPositionMap
 			}
 		case 'endMove':
-			console.log('ending move');
+			let positions = state.positions;
+			positions = moves[state.move].operation(positions);
+			let cubeRotations = state.cubeRotations;
+			cubeRotations = moves[state.move].cubeOperation(cubeRotations);
 			return {
 				...state,
-				moving: false
+				move: null,
+				moving: false,
+				rotations: DefaultState.rotations,
+				positions,
+				cubeRotations
 			}
 		case 'setRotations':
 			let newRotations = { 
