@@ -15,8 +15,6 @@ function Face({ offset, type, space, idOffset, rotation}){
 		return cubes.map((pos, ind) => <Cube type={type} position={pos} colorID={ind + (idOffset * 9)} />);
 	}
 
-	console.log('rotation from props', rotation);
-
 	return (
 		<group rotation={[0, Math.degToRad(rotation), 0]}>
 			{getCubes()}

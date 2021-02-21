@@ -9,7 +9,10 @@ export const DefaultState = {
 	ArrowRight: false,
 	faceConfig: 0,
 	move: null,
+	debug_move: null,
 	moving: false,
+
+	// this object maintains the data for animations only
 	rotations: {
 		// face configuration type Zero
 		0: {
@@ -43,7 +46,36 @@ export const DefaultState = {
 		21,22,23,
 		24,25,26
 	],
-	cubeRotations: Array(27).fill([0,0,0]),
+
+	// cubeName is index for each cube's rotation array
+	cubeRotations: [
+		[0,0,0],[0,0,0],[0,0,0],
+		[0,0,0],[0,0,0],[0,0,0],
+		[0,0,0],[0,0,0],[0,0,0],
+
+		[0,0,0],[0,0,0],[0,0,0],
+		[0,0,0],[0,0,0],[0,0,0],
+		[0,0,0],[0,0,0],[0,0,0],
+
+		[0,0,0],[0,0,0],[0,0,0],
+		[0,0,0],[0,0,0],[0,0,0],
+		[0,0,0],[0,0,0],[0,0,0]
+	],
+
+	// cubeName is index for each cube's axel mapping array
+	cubeAxelMapping: [
+		[0,1,2],[0,1,2],[0,1,2],
+		[0,1,2],[0,1,2],[0,1,2],
+		[0,1,2],[0,1,2],[0,1,2],
+
+		[0,1,2],[0,1,2],[0,1,2],
+		[0,1,2],[0,1,2],[0,1,2],
+		[0,1,2],[0,1,2],[0,1,2],
+
+		[0,1,2],[0,1,2],[0,1,2],
+		[0,1,2],[0,1,2],[0,1,2],
+		[0,1,2],[0,1,2],[0,1,2],
+	],
 	positionMap: [
 		[
 			24, 25, 26,
@@ -84,10 +116,13 @@ export const DefaultState = {
 			1,10,19,
 			0,9,18
 		]
-	]
+	],
+	spin: [0, 0, 0]
 }
 
 export const reducer = (state, action) => {
+	let newState;
+	let inc = 45;
 	switch(action.type){
 		case 'ArrowLeft':
 			return {
@@ -123,31 +158,60 @@ export const reducer = (state, action) => {
 				move: action.payload,
 				faceConfig: newFaceConfig,
 			}
-		case 'endMove':
-			let positions = state.positions;
-			positions = moves[state.move].operation(positions);
-			let cubeRotations = state.cubeRotations;
-			cubeRotations = moves[state.move].cubeOperation(cubeRotations);
+		case 'debug_move':
 			return {
 				...state,
-				move: null,
-				moving: false,
-				rotations: DefaultState.rotations,
-				positions,
-				cubeRotations
+				moving: true,
+				debug_move: action.payload
+			}
+		case 'endMove':
+			if (state.moving){
+				let { positions, cubeRotations, cubeAxelMapping } = state;
+				positions = moves[state.move].operation(positions);
+				let { rotations, am } = moves[state.move].cubeOperation(cubeRotations, positions, cubeAxelMapping);
+				cubeRotations = rotations;
+				cubeAxelMapping = am;
+				return {
+					...state,
+					move: null,                        // unset move
+					moving: false,                     // prevents further animation, and allows next move
+					rotations: DefaultState.rotations, // reset each face to its default state
+					positions,                         // update cubes to new positions,
+					cubeRotations,                     // rotate each individual cube so that it faces the correct direction
+					cubeAxelMapping                    // update the axel orientation for each cube
+				}
+			} else {
+				return state;
 			}
 		case 'setRotations':
 			let newRotations = { 
 				...state.rotations, 
-				[action.payload[0]]: {
-					...state.rotations[action.payload[0]],
-					[action.payload[1]]: action.payload[2] 
+				[action.payload.faceConfig]: {
+					...state.rotations[action.payload.faceConfig],
+					[action.payload.faceID]: action.payload.newVal
 				}
 			};
 			return {
 				...state,
 				rotations: newRotations
 			}
+		case 'setDebugSpin':
+			console.log(action.payload);
+			let newSpin = Array.from(state.spin);
+			let newCubeRotations = JSON.parse(JSON.stringify(state.cubeRotations));
+			newCubeRotations[0][action.payload.axis] = action.payload.newVal;
+			newSpin[action.payload.axis] = action.payload.newVal;
+			return {
+				...state,
+				cubeRotations: newCubeRotations
+				//spin: newSpin
+			}
+		case 'endDebugMove':
+			return {
+				...state,
+				debug_move: null,
+				moving: false
+			};
 		default:
 	}
 	return state;

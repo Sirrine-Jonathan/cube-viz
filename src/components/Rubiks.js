@@ -10,7 +10,7 @@ function Rubiks({ space }){
 	const dispatch = useContext(AppDispatchContext);
 	const [partMoving, setPartMoving] = useState(false);
 	const [limit, setLimit] = useState(0);
-	let speed = 0.15;
+	let speed = 0.05;
 
 	useFrame(() => {
 		
@@ -103,6 +103,27 @@ function Rubiks({ space }){
 			if (state.move === 'M'){
 				rotateFace(false, 2, 1)
 			}
+
+
+			// debug moves 
+			if (state.debug_move === 'x'){
+				rotateCube(false, 0);
+			}
+			if (state.debug_move === 'X'){
+				rotateCube(true, 0);
+			}
+			if (state.debug_move  === 'y'){
+				rotateCube(false, 1);
+			}
+			if (state.debug_move  === 'Y'){
+				rotateCube(true, 1);
+			}
+			if (state.debug_move  === 'z'){
+				rotateCube(false, 2);
+			}
+			if (state.debug_move  === 'Z'){
+				rotateCube(true, 2);
+			}
 		}
 
 	})
@@ -120,10 +141,33 @@ function Rubiks({ space }){
 			if (check){
 				newVal = limit;
 				setPartMoving(false);
-				dispatch({ type: 'setRotations', payload: [faceConfig, faceID, newVal] });
+				dispatch({ type: 'setRotations', payload: {faceConfig, faceID, newVal} });
 				dispatch({ type: 'endMove' });
 			} else {
-				dispatch({ type: 'setRotations', payload: [faceConfig, faceID, newVal] });
+				dispatch({ type: 'setRotations', payload: {faceConfig, faceID, newVal} });
+			}
+		}
+	}
+
+	const rotateCube = (reverse = false, axis) => {
+		let current = state.cubeRotations[0][axis];
+		//let current = state.spin[0];
+		if (!partMoving){
+			let limit = (reverse) ? current + 90:current - 90;
+			setLimit(limit);
+			setPartMoving(true);
+		} else {
+			let inc = 1;
+			let newVal = (reverse) ? current + inc:current - inc;
+			let check = (reverse) ? (newVal >= limit):(newVal <= limit);
+			console.log({newVal});
+			if (check){
+				newVal = limit;
+				setPartMoving(false);
+				dispatch({ type: 'setDebugSpin', payload: { newVal, axis }});
+				dispatch({ type: 'endDebugMove' });
+			} else {
+				dispatch({ type: 'setDebugSpin', payload: { newVal, axis }});
 			}
 		}
 	}
@@ -134,6 +178,7 @@ function Rubiks({ space }){
 
 	return (
 		<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
+			<axesHelper size={2000} />
 			<Face space={space} offset="-1" idOffset={0} type={state.faceConfig} faceID={0} rotation={getRotation(0)} />
 			<Face space={space} offset="0"  idOffset={1} type={state.faceConfig} faceID={1} rotation={getRotation(1)} />
 			<Face space={space} offset="1"  idOffset={2} type={state.faceConfig} faceID={2} rotation={getRotation(2)} />

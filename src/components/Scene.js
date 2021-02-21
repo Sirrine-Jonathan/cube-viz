@@ -3,7 +3,7 @@ import { Canvas, useThree } from 'react-three-fiber'
 import { CubeTextureLoader } from "three";
 import Rubiks from './Rubiks'
 import * as THREE from 'three'
-import { Plane, OrbitControls } from "drei";
+import { Plane, OrbitControls, Html } from "drei";
 import { AppDispatchContext, AppStateContext } from '../State/context'
 
 
@@ -22,6 +22,13 @@ function Environment() {
 	// Set the scene background property to the resulting texture.
 	scene.background = texture;
 	return null;
+}
+
+const controlStyle = { 
+	background: 'rgba(14,14,14,0.5)',
+	padding: '20px',
+	borderRadius: '2px',
+	width: '500px'
 }
 
 function Scene(){
@@ -58,7 +65,7 @@ function Scene(){
 						shadow-mapSize-height={512}
 						shadow-mapSize-width={512}
 					/>
-					<Rubiks space="1.03" />
+					<Rubiks space="1.5" />
 					<Plane
 						receiveShadow
 						rotation={[-Math.PI / 2, 0, 0]}
@@ -68,6 +75,37 @@ function Scene(){
 						<meshLambertMaterial attach="material" color="#fff" />
 					</Plane>
 					{/* <Environment /> */}
+					{/*
+						'u', 'l', 'f', 'r', 'b', 'd', // clockwise
+						'U', 'L', 'F', 'R', 'B', 'D', // counter clockwise
+						'm', 'M', 'e', 'E', 's', 'S', // slice turns
+					*/}
+					{/* <Html position={[-5, 5, 0]}>
+						<div style={controlStyle}>
+							<h2>Controls</h2>
+							<table>
+								<tr>
+									<td>u</td>
+									<td>Upper face</td>
+								</tr>
+								<tr>
+									<td>l</td>
+									<td>l</td>
+								</tr>
+								<tr>
+									<td>u</td>
+									<td>Upper face</td>
+								</tr>
+							</table>
+						</div>
+					</Html> */}
+					<Html position={[-5, 5, 0]}>
+						<div style={controlStyle}>
+							<div>Position: {v.positions.indexOf(0)}</div>
+							<div>Rotations: [{v.cubeRotations[0][0]}, {v.cubeRotations[0][1]}, {v.cubeRotations[0][2]}]</div>
+							<div>Axis Adjs: [{v.cubeAxelMapping[0][0]}, {v.cubeAxelMapping[0][1]}, {v.cubeAxelMapping[0][2]}]</div>
+						</div>
+					</Html>
 				</AppDispatchContext.Provider>
 			</AppStateContext.Provider>
 		</Canvas>

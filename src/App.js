@@ -19,10 +19,12 @@ function App() {
 		if (e.key.includes('Arrow')){
 			dispatch({ type: e.key, payload: true });
 		}
+		
 		if (e.key === '1' || e.key === '2' || e.key === '3'){
 			console.log(`Face Config: ${e.key}`);
 			dispatch({ type: 'faceConfig', payload: e.key - 1})
 		}
+		
 
 		// https://ruwix.com/the-rubiks-cube/notation/
 		const moves = [
@@ -33,6 +35,15 @@ function App() {
 		if (moves.includes(e.key)){
 			if (!state.moving){
 				dispatch({ type: 'move', 'payload': e.key });
+			}
+		}
+
+		const debug_moves = [
+			'x', 'X', 'y', 'Y', 'z', 'Z'
+		]
+		if (debug_moves.includes(e.key)){
+			if (!state.moving){
+				dispatch({ type: 'debug_move', 'payload': e.key })
 			}
 		}
 	}
@@ -54,7 +65,7 @@ function App() {
 		<AppStateContext.Provider value={context.state}>
 			<AppDispatchContext.Provider value={context.dispatch}>
 			<div className="App">
-				{/* <TopBar /> */}
+				<TopBar />
 				<header className="App-header">
 					<Scene />
 				</header>

@@ -3,6 +3,7 @@ import React, { useContext } from 'react'
 import './ColorMaterial'
 import { AppStateContext } from '../State/context'
 import { Html } from 'drei';
+import { Math } from 'three'
 
 function Cube(props) {
 
@@ -54,22 +55,59 @@ function Cube(props) {
 			arr[5] = "orange"
 		}
 		return arr.map(color => <meshBasicMaterial
-			
 			attachArray="material"
 			color={colorMap[color]}
 			metalness={1}
 		/>);
 	}
 
+	let cubeName = getRealCubeName(props.colorID);
+	let rotationsDeg = state.cubeRotations[cubeName];
+	/*
+	let rotations = [
+		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][0]]),
+		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][1]]),
+		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][2]])
+	]
+	*/
+
+	if (cubeName === 0){
+		console.log(rotationsDeg);
+	}
+
+	const getRotations = () => {
+		let r = rotationsDeg;
+		// if (cubeName === 0){
+		// 	r[0] += state.spin[0];
+		// 	r[1] += state.spin[1];
+		// 	r[2] += state.spin[2];
+		// }
+		let rotations = [
+			Math.degToRad(r[0]),
+			Math.degToRad(r[1]),
+			Math.degToRad(r[2])
+		]
+		return rotations;
+	}
+
 	return (
 	<mesh
 		{...props}
 		castShadow
-		rotation={state.cubeRotations[getRealCubeName(props.colorID)]}
+		rotation={getRotations()}
 	>
-		{/* <Html scaleFactor={5} position={[0,0,0]}>
-			{ getRealCubeName(props.colorID) }
-		</Html> */}
+
+		{ 
+			(getRealCubeName(props.colorID) === 0) ?
+			(
+				<>
+					<Html scaleFactor={5} position={[0,0,0]}>
+						{ getRealCubeName(props.colorID) }
+					</Html>
+				<axesHelper size={20} />
+				</>
+			):null
+		}
 		<boxBufferGeometry args={[1, 1, 1]} attach="geometry" />
 		{ getColoredSides() }
 	</mesh>
