@@ -63,6 +63,7 @@ function Cube(props) {
 
 	let cubeName = getRealCubeName(props.colorID);
 	let rotationsDeg = state.cubeRotations[cubeName];
+	
 	/*
 	let rotations = [
 		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][0]]),
@@ -71,9 +72,7 @@ function Cube(props) {
 	]
 	*/
 
-	if (cubeName === 0){
-		console.log(rotationsDeg);
-	}
+
 
 	const getRotations = () => {
 		let r = rotationsDeg;
@@ -87,6 +86,9 @@ function Cube(props) {
 			Math.degToRad(r[1]),
 			Math.degToRad(r[2])
 		]
+		if (cubeName === 0){
+			console.log('rotationsDeg', rotationsDeg);
+		}
 		return rotations;
 	}
 
@@ -94,7 +96,7 @@ function Cube(props) {
 	<mesh
 		{...props}
 		castShadow
-		rotation={getRotations()}
+		rotation={[...getRotations()]}
 	>
 
 		{ 
