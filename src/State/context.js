@@ -2,6 +2,20 @@
 import React from 'react'
 import { moves } from '../Util/Rotations';
 
+const space = 1.2;
+const generateInitialPositions = () => {
+	let positions = [];
+	for (let z = 2; z > -1; z--){
+		for (let y = 2; y > -1; y--){
+			for (let x = -1; x < 2; x++){
+				let pos = [x, y, z].map(e => e * space);
+				positions.push(pos);
+			}
+		}
+	}
+	return positions;
+}
+
 export const DefaultState = {
 	ArrowDown: false,
 	ArrowUp: false,
@@ -117,8 +131,15 @@ export const DefaultState = {
 			0,9,18
 		]
 	],
-	spin: [0, 0, 0]
+	spin: [0, 0, 0],
+
+
+
+	// four by four
+	pos: generateInitialPositions()
 }
+
+
 
 export const reducer = (state, action) => {
 	let newState;

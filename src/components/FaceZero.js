@@ -1,5 +1,5 @@
 import React from 'react'
-import Cube from './Cube'
+import Cube from './Cube2'
 import { Math } from 'three'
 
 function Face({ offset, type, space, idOffset, rotation}){

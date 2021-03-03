@@ -1,9 +1,9 @@
 import React, {useRef, useContext, useState } from 'react'
 import { useFrame } from 'react-three-fiber'
 import { AppStateContext, AppDispatchContext } from '../State/context'
-import Face from './Face'
+import Cube from './Cube'
 
-function Rubiks({ space }){
+function Rubiks(){
 
 	const block = useRef()
 	const state  = useContext(AppStateContext);
@@ -172,17 +172,58 @@ function Rubiks({ space }){
 		}
 	}
 
-	const getRotation = (id) => {
-		return state.rotations[state.faceConfig][id];
-	}
+	let faceConfig = 0;
 
 	return (
-		<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
-			<axesHelper size={2000} />
-			<Face space={space} offset="-1" idOffset={0} type={state.faceConfig} faceID={0} rotation={getRotation(0)} />
-			<Face space={space} offset="0"  idOffset={1} type={state.faceConfig} faceID={1} rotation={getRotation(1)} />
-			<Face space={space} offset="1"  idOffset={2} type={state.faceConfig} faceID={2} rotation={getRotation(2)} />
-		</group>
+		(state.pos.length >= 8) ? (
+			<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
+				(faceConfig === 0) ? (
+					<group>
+				):null
+				<Cube position={state.pos[0]}  ID={0}  />
+				<Cube position={state.pos[1]}  ID={1}  />
+				<Cube position={state.pos[2]}  ID={2}  />
+				<Cube position={state.pos[3]}  ID={3}  />
+				<Cube position={state.pos[4]}  ID={4}  />
+				<Cube position={state.pos[5]}  ID={5}  />
+				<Cube position={state.pos[6]}  ID={6}  />
+				<Cube position={state.pos[7]}  ID={7}  />
+				<Cube position={state.pos[8]}  ID={8}  />
+				(faceConfig === 0) ? (
+					</group>
+				):null
+				(faceConfig === 0) ? (
+					<group>
+				):null
+				<Cube position={state.pos[9]}  ID={9}  />
+				<Cube position={state.pos[10]} ID={10} />
+				<Cube position={state.pos[11]} ID={11} />
+				<Cube position={state.pos[12]} ID={12} />
+				<Cube position={state.pos[13]} ID={13} />
+				<Cube position={state.pos[14]} ID={14} />
+				<Cube position={state.pos[15]} ID={15} />
+				<Cube position={state.pos[16]} ID={16} />
+				<Cube position={state.pos[17]} ID={17} />
+				(faceConfig === 0) ? (
+					</group>
+				):null
+				(faceConfig === 0) ? (
+					<group>
+				):null
+				<Cube position={state.pos[18]} ID={18} />
+				<Cube position={state.pos[19]} ID={19} />
+				<Cube position={state.pos[20]} ID={20} />
+				<Cube position={state.pos[21]} ID={21} />
+				<Cube position={state.pos[22]} ID={22} />
+				<Cube position={state.pos[23]} ID={23} />
+				<Cube position={state.pos[24]} ID={24} />
+				<Cube position={state.pos[25]} ID={25} />
+				<Cube position={state.pos[26]} ID={26} />
+				(faceConfig === 0) ? (
+					</group>
+				):null
+			</group>
+		):null 
 	)
 }
 
