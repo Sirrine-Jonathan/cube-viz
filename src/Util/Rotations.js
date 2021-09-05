@@ -1,7 +1,6 @@
 // moves according to this source
 // https://ruwix.com/the-rubiks-cube/notation/
 
-
 const rotatef = (n) => {
 	let nn = Array.from(n);
 	nn[0] = n[6];
@@ -290,188 +289,89 @@ const rotateM = (n) => {
 	return nn;
 }
 
-const rotateCube = (cubeRotations, positions, cubeAxelMapping, poss, clockwise, axis = 2) => {
-	let rotations = JSON.parse(JSON.stringify(cubeRotations));
-	let am = JSON.parse(JSON.stringify(cubeAxelMapping));
-	
-	poss.forEach(pos => {
-		let name = positions[pos];
-		let real_axis = am[name][axis];
-		let invert = real_axis !== axis;
-		if (name === 0){
-			console.log(`axis: ${axis}, real_axis: ${real_axis}, [${am[0][0]}, ${am[0][1]}, ${am[0][2]}]`);
-		}
-
-		
-		//clockwise = (invert) ? !clockwise:clockwise;
-
-		// perform rotation on axis
-		if (clockwise){
-			rotations[name][real_axis] += 90;
-			if (name === 0){
-				console.log(`added 90 to ${real_axis}`);
-			}
-		} else {
-			rotations[name][real_axis] -= 90;
-			if (name === 0){ 
-				console.log(`subtracted 90 from ${real_axis}`);
-			}
-		}
-
-		// adjust axis
-		//adjustAxis();
-		function adjustAxis(){
-			if (axis === 0){ // x
-				am[name][2] = cubeAxelMapping[name][1]
-				am[name][1] = cubeAxelMapping[name][2]
-			} else if (axis === 1){ // y
-				am[name][2] = cubeAxelMapping[name][0]
-				am[name][0] = cubeAxelMapping[name][2]
-			} else if (axis === 2){ //z
-				am[name][0] = cubeAxelMapping[name][1]
-				am[name][1] = cubeAxelMapping[name][0]
-			}
-		}
-		
-	})
-	return { rotations, am }
-}
-
 const moves = {
 	'f':{
-		faceConfig: 0,
+		mainAxis: 'z',
+		order: 2,
 		operation: rotatef,
-		positions: [0,1,2,3,4,5,6,7,8],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['f'].positions, false);
-		}
+		positions: [0,1,2,3,4,5,6,7,8]
 	},
 	'F':{
-		faceConfig: 0,
-		operation: rotateF,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['f'].positions, true);
-		}
+		mainAxis: 'z',
+		order: 2,
+		operation: rotateF
 	},
 	'b':{
-		faceConfig: 0,
+		mainAxis: 'z',
 		operation: rotateb,
-		positions: [ 20,19,18,23,22,21,26,25,24 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['b'].positions, true);
-		}
+		positions: [18,19,20,21,22,23,24,25,26]
 	},
 	'B':{
-		faceConfig: 0,
-		operation: rotateB,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['b'].positions, false);
-		}
+		mainAxis: 'z',
+		operation: rotateB
 	},
 	's':{
-		faceConfig: 0,
+		mainAxis: 'z',
 		operation: rotates,
-		positions: [ 9,10,11,12,13,14,15,16,17 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['s'].positions, false);
-		}
+		positions: [9,10,11,12,13,14,15,16,17]
 	},
 	'S':{
-		faceConfig: 0,
-		operation: rotateS,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['s'].positions, true);
-		}
+		mainAxis: 'z',
+		operation: rotateS
 	},
 	'u':{
-		faceConfig: 1,
+		mainAxis: 'y',
 		operation: rotateu,
-		positions: [ 0,1,2,9,10,11,18,19,20 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['u'].positions, false, 1);
-		}
+		positions: [0,1,2,9,10,11,18,19,20]
 	},
 	'U':{
-		faceConfig: 1,
-		operation: rotateU,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['u'].positions, true, 1);
-		}
+		mainAxis: 'y',
+		operation: rotateU
 	},
 	'd':{
-		faceConfig: 1,
+		mainAxis: 'y',
 		operation: rotated,
-		positions: [ 6,7,8,15,16,17,24,25,26 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['d'].positions, true, 1);
-		}
+		positions: [6,7,8,15,16,17,24,25,26]
 	},
 	'D':{
-		faceConfig: 1,
-		operation: rotateD,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['d'].positions, false, 1);
-		}
+		mainAxis: 'y',
+		operation: rotateD
 	},
 	'e':{
-		faceConfig: 1,
+		mainAxis: 'y',
 		operation: rotatee,
-		positions: [ 3,4,5,12,13,14,21,22,23 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['e'].positions, true, 1);
-		}
+		positions: [3,4,5,12,13,14,21,22,23]
 	},
 	'E':{
-		faceConfig: 1,
-		operation: rotateE,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['e'].positions, false, 1);
-		}
+		mainAxis: 'y',
+		operation: rotateE
 	},
 	'l':{
-		faceConfig: 2,
+		mainAxis: 'x',
 		operation: rotatel,
-		positions: [ 0,3,6,9,12,15,18,21,24 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['l'].positions, true, 0);
-		}
+		positions: [0,9,18,3,12,21,6,15,24]
 	},
 	'L':{
-		faceConfig: 2,
-		operation: rotateL,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['l'].positions, false, 0);
-		}
+		mainAxis: 'x',
+		operation: rotateL
 	},
 	'r':{
-		faceConfig: 2,
+		mainAxis: 'x',
 		operation: rotater,
-		positions: [ 2,11,20,5,14,23,8,17,26 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['r'].positions, false, 0);
-		}
+		positions: [2,11,20,5,14,23,8,17,26]
 	},
 	'R':{
-		faceConfig: 2,
-		operation: rotateR,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['r'].positions, true, 0);
-		}
+		mainAxis: 'x',
+		operation: rotateR
 	},
 	'm': {
-		faceConfig: 2,
+		mainAxis: 'x',
 		operation: rotatem,
-		positions: [ 1,10,19,4,13,22,7,16,25 ],
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['m'].positions, true, 0);
-		}
+		positions: [1,10,19,4,13,22,7,16,25]
 	},
 	'M': {
-		faceConfig: 2, 
-		operation: rotateM,
-		cubeOperation: (cubeRotations, positions, cubeAxelMapping) => {
-			return rotateCube(cubeRotations, positions, cubeAxelMapping, moves['m'].positions, false, 0);
-		}
+		mainAxis: 'x',
+		operation: rotateM
 	}
 }
 

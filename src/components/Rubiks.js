@@ -1,17 +1,31 @@
-import React, {useRef, useContext, useState } from 'react'
-import { useFrame } from 'react-three-fiber'
+import React, {useRef, useContext, useState, useEffect } from 'react'
+import { useFrame, useThree } from 'react-three-fiber'
+import { Vector3, MathUtils, Group } from 'three';
 import { AppStateContext, AppDispatchContext } from '../State/context'
+import { moves } from '../Util/Rotations';
 import Cube from './Cube'
 
 function Rubiks(){
 
-	const block = useRef()
+	const block = useRef();
+	const degLimit = 90;
+
+	// app state
 	const state  = useContext(AppStateContext);
 	const dispatch = useContext(AppDispatchContext);
-	const [partMoving, setPartMoving] = useState(false);
-	const [limit, setLimit] = useState(0);
-	let speed = 0.05;
 
+	// internal state
+	const [degCount, setDegCount] = useState(0);
+	const [space, setSpace] = useState(0.05);
+
+	// config
+	const speed = 0.05;
+	const degreeIncrement = 5;
+
+	/*
+		Animation Loop
+		Looks for changes to keyboard and makes changes
+	*/
 	useFrame(() => {
 		
 		// whole cube rotation with arrow keys
@@ -30,200 +44,107 @@ function Rubiks(){
 
 		// rotate faces with letter keys
 		if (state.moving){
-			// face config zero operations
-			if (state.move === 'f'){
-				rotateFace(false, 0, 2);
-			}
-			if (state.move === 'F'){
-				rotateFace(true, 0, 2)
-			}
-			
-			if (state.move === 'b'){
-				rotateFace(true, 0, 0)
-			}
-
-			if (state.move === 'B'){
-				rotateFace(false, 0, 0)
-			}
-
-			if (state.move === 's'){
-				rotateFace(false, 0, 1)
-			}
-
-			if (state.move === 'S'){
-				rotateFace(true, 0, 1)
-			}
-
-			// face config one operations
-			if (state.move === 'u'){
-				rotateFace(false, 1, 2)
-			}
-
-			if (state.move === 'U'){
-				rotateFace(true, 1, 2)
-			}
-
-			if (state.move === 'd'){
-				rotateFace(true, 1, 0)
-			}
-
-			if (state.move === 'D'){
-				rotateFace(false, 1, 0)
-			}
-
-			if (state.move === 'e'){
-				rotateFace(true, 1, 1)
-			}
-
-			if (state.move === 'E'){
-				rotateFace(false, 1, 1)
-			}
-
-			// face config two operations
-			if (state.move === 'r'){
-				rotateFace(false, 2, 2)
-			}
-
-			if (state.move === 'R'){
-				rotateFace(true, 2, 2)
-			}
-
-			if (state.move === 'l'){
-				rotateFace(true, 2, 0)
-			}
-
-			if (state.move === 'L'){
-				rotateFace(false, 2, 0)
-			}
-
-			if (state.move === 'm'){
-				rotateFace(true, 2, 1)
-			}
-
-			if (state.move === 'M'){
-				rotateFace(false, 2, 1)
-			}
-
-
-			// debug moves 
-			if (state.debug_move === 'x'){
-				rotateCube(false, 0);
-			}
-			if (state.debug_move === 'X'){
-				rotateCube(true, 0);
-			}
-			if (state.debug_move  === 'y'){
-				rotateCube(false, 1);
-			}
-			if (state.debug_move  === 'Y'){
-				rotateCube(true, 1);
-			}
-			if (state.debug_move  === 'z'){
-				rotateCube(false, 2);
-			}
-			if (state.debug_move  === 'Z'){
-				rotateCube(true, 2);
-			}
+			rotateFace();
 		}
-
 	})
 
-	const rotateFace = (clockwise = true, faceConfig, faceID) => {
-		let current = state.rotations[faceConfig][faceID];
-		if (!partMoving){
-			let limit = (clockwise) ? current + 90:current - 90;
-			setLimit(limit);
-			setPartMoving(true);
+	const rotateFace = () => {
+		let newDegCount = degCount + degreeIncrement;
+		// handle situation where degreeIncrement puts newDegCount over or under limit
+		if (newDegCount >= degLimit){
+			let customInc = newDegCount % degLimit;
+			setDegCount(0);
+			dispatch({ type: 'endMove' });
+			performRotateFaceAnimation(customInc);
 		} else {
-			let inc = 5;
-			let newVal = (clockwise) ? current + inc:current - inc;
-			let check = (clockwise) ? (newVal >= limit):(newVal <= limit);
-			if (check){
-				newVal = limit;
-				setPartMoving(false);
-				dispatch({ type: 'setRotations', payload: {faceConfig, faceID, newVal} });
-				dispatch({ type: 'endMove' });
-			} else {
-				dispatch({ type: 'setRotations', payload: {faceConfig, faceID, newVal} });
-			}
+			// carry on like normal
+			setDegCount(newDegCount);
+			performRotateFaceAnimation();
 		}
 	}
 
-	const rotateCube = (reverse = false, axis) => {
-		let current = state.cubeRotations[0][axis];
-		//let current = state.spin[0];
-		if (!partMoving){
-			let limit = (reverse) ? current + 90:current - 90;
-			setLimit(limit);
-			setPartMoving(true);
-		} else {
-			let inc = 1;
-			let newVal = (reverse) ? current + inc:current - inc;
-			let check = (reverse) ? (newVal >= limit):(newVal <= limit);
-			console.log({newVal});
-			if (check){
-				newVal = limit;
-				setPartMoving(false);
-				dispatch({ type: 'setDebugSpin', payload: { newVal, axis }});
-				dispatch({ type: 'endDebugMove' });
-			} else {
-				dispatch({ type: 'setDebugSpin', payload: { newVal, axis }});
-			}
-		}
+	const shouldAttach = (each, index) => {
+		let relevantPositions = moves[state.letterKey.toLowerCase()].positions;
+		let relevantCubes = relevantPositions.map(pos => {
+			return state.positions[pos];
+		});
+		return (
+			each &&
+			each.current &&
+			relevantCubes.indexOf(index) >= 0
+		);
 	}
 
-	let faceConfig = 0;
+	const performRotateFaceAnimation = (customInc) => {
+		let clockwise = state.letterKey === state.letterKey.toUpperCase();
+		if (
+			state.letterKey.toUpperCase() === 'L' ||
+			state.letterKey.toUpperCase() === 'D' ||
+			state.letterKey.toUpperCase() === 'B' ||
+			state.letterKey.toUpperCase() === 'M' ||
+			state.letterKey.toUpperCase() === 'E'
+		){
+			clockwise = !clockwise;
+		}
+		const axis = moves[state.letterKey].mainAxis;
+		let degrees = degreeIncrement;
+		if (customInc){
+			degrees = customInc;
+		}
+		let group = new Group();
+		let { cubeRefs, sceneRef } = state;
+
+		cubeRefs.forEach((each, index) => {
+			if (shouldAttach(each, index)){
+				group.attach(each.current);
+			}
+		});
+		sceneRef.current.attach(group);
+		group.rotateOnWorldAxis(new Vector3(
+			(axis === 'x') ? 1:0,
+			(axis === 'y') ? 1:0,
+			(axis === 'z') ? 1:0
+		), MathUtils.degToRad((clockwise) ? degrees:-degrees));
+		cubeRefs.forEach((each, index) => {
+			if (shouldAttach(each, index)){
+				let cubeID = state.positions[index];
+				sceneRef.current.attach(each.current);
+			}
+		});
+	}
+
+	const generatePositions = (offset) => {
+		let positions = [];
+		for (let z = 1; z >= -1; z--){
+			for (let y = 1; y >= -1; y--){
+				for (let x = -1; x <= 1; x++){
+					let pos = [x, y, z].map(e => e * (1 + offset));
+					positions.push(pos);
+				}
+			}
+		}
+		return positions;
+	}
+
+	const getCubes = (offset) => {
+		let pos = generatePositions(offset);
+		return new Array(27).fill('empty').map(
+			(each, index) => (
+				<Cube position={pos[index]} ID={index} />
+			)
+		);
+	}
+
+	useEffect(() => {
+		if (typeof dispatch === "function"){
+			dispatch({ type: 'setSceneRef', payload: block })
+		}
+	}, [dispatch])
 
 	return (
-		(state.pos.length >= 8) ? (
-			<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
-				(faceConfig === 0) ? (
-					<group>
-				):null
-				<Cube position={state.pos[0]}  ID={0}  />
-				<Cube position={state.pos[1]}  ID={1}  />
-				<Cube position={state.pos[2]}  ID={2}  />
-				<Cube position={state.pos[3]}  ID={3}  />
-				<Cube position={state.pos[4]}  ID={4}  />
-				<Cube position={state.pos[5]}  ID={5}  />
-				<Cube position={state.pos[6]}  ID={6}  />
-				<Cube position={state.pos[7]}  ID={7}  />
-				<Cube position={state.pos[8]}  ID={8}  />
-				(faceConfig === 0) ? (
-					</group>
-				):null
-				(faceConfig === 0) ? (
-					<group>
-				):null
-				<Cube position={state.pos[9]}  ID={9}  />
-				<Cube position={state.pos[10]} ID={10} />
-				<Cube position={state.pos[11]} ID={11} />
-				<Cube position={state.pos[12]} ID={12} />
-				<Cube position={state.pos[13]} ID={13} />
-				<Cube position={state.pos[14]} ID={14} />
-				<Cube position={state.pos[15]} ID={15} />
-				<Cube position={state.pos[16]} ID={16} />
-				<Cube position={state.pos[17]} ID={17} />
-				(faceConfig === 0) ? (
-					</group>
-				):null
-				(faceConfig === 0) ? (
-					<group>
-				):null
-				<Cube position={state.pos[18]} ID={18} />
-				<Cube position={state.pos[19]} ID={19} />
-				<Cube position={state.pos[20]} ID={20} />
-				<Cube position={state.pos[21]} ID={21} />
-				<Cube position={state.pos[22]} ID={22} />
-				<Cube position={state.pos[23]} ID={23} />
-				<Cube position={state.pos[24]} ID={24} />
-				<Cube position={state.pos[25]} ID={25} />
-				<Cube position={state.pos[26]} ID={26} />
-				(faceConfig === 0) ? (
-					</group>
-				):null
-			</group>
-		):null 
+		<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
+			{ getCubes(space) }
+		</group>
 	)
 }
 

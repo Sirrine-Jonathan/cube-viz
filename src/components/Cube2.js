@@ -63,56 +63,38 @@ function Cube(props) {
 
 	let cubeName = getRealCubeName(props.colorID);
 	let rotationsDeg = state.cubeRotations[cubeName];
-	
-	/*
-	let rotations = [
-		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][0]]),
-		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][1]]),
-		Math.degToRad(rotationsDeg[state.cubeAxelMapping[cubeName][2]])
-	]
-	*/
-
-
 
 	const getRotations = () => {
 		let r = rotationsDeg;
-		// if (cubeName === 0){
-		// 	r[0] += state.spin[0];
-		// 	r[1] += state.spin[1];
-		// 	r[2] += state.spin[2];
-		// }
 		let rotations = [
 			Math.degToRad(r[0]),
 			Math.degToRad(r[1]),
 			Math.degToRad(r[2])
 		]
-		if (cubeName === 0){
-			console.log('rotationsDeg', rotationsDeg);
-		}
 		return rotations;
 	}
 
 	return (
-	<mesh
-		{...props}
-		castShadow
-		rotation={[...getRotations()]}
-	>
+		<mesh
+			{...props}
+			castShadow
+			rotation={[...getRotations()]}
+		>
 
-		{ 
-			(getRealCubeName(props.colorID) === 0) ?
-			(
-				<>
-					<Html scaleFactor={5} position={[0,0,0]}>
-						{ getRealCubeName(props.colorID) }
-					</Html>
-				<axesHelper size={20} />
-				</>
-			):null
-		}
-		<boxBufferGeometry args={[1, 1, 1]} attach="geometry" />
-		{ getColoredSides() }
-	</mesh>
+			{ 
+				(getRealCubeName(props.colorID) === 0) ?
+				(
+					<>
+						<Html scaleFactor={5} position={[0,0,0]}>
+							{ getRealCubeName(props.colorID) }
+						</Html>
+					<axesHelper size={20} />
+					</>
+				):null
+			}
+			<boxBufferGeometry args={[1, 1, 1]} attach="geometry" />
+			{ getColoredSides() }
+		</mesh>
 	)
 }
 
