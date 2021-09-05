@@ -15,6 +15,10 @@ function Scene({
 	const v = useContext(AppStateContext);
 	const d = useContext(AppDispatchContext);
 
+	let skyboxes = Array(10).fill(null);
+	skyboxes[1] = './space';
+	skyboxes[2] = './cube';
+
 	const onCanvasCreated = ({ gl, scene }) => {
 		gl.toneMapping = THREE.ACESFilmicToneMapping
 		gl.outputEncoding = THREE.sRGBEncoding
@@ -49,7 +53,7 @@ function Scene({
 					/>
 					{children}
 					{(displayEnvironment) ? (
-						<Environment />
+						<Environment path={skyboxes[v.skybox]} />
 					):null}
 					{(displayFloor) ? (<Plane
 						receiveShadow

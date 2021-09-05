@@ -1,11 +1,11 @@
 /* eslint-disable no-duplicate-case */
 import React from 'react'
-import { Vector3, MathUtils, Group } from 'three';
 import { moves } from '../Util/Rotations';
 
 export const DefaultState = {
 
 	// state of keys
+	skybox: 0,
 	ArrowDown: false,
 	ArrowUp: false,
 	ArrowLeft: false,
@@ -14,6 +14,9 @@ export const DefaultState = {
 	mainAxis: 'x', // can be x, y, or z
 	moving: false,
 	undoing: false,
+	mixing: false,
+	mixAmount: 10,
+	mix: [],
 	animating: false,
 	cubeRefs: [],
 	sceneRef: null,
@@ -37,6 +40,22 @@ export const DefaultState = {
 
 export const reducer = (state, action) => {
 	switch(action.type){
+
+		/**
+		 * These actions used for initializing DOM refs
+		 */
+		 case 'setRef':
+			let newRefs = [...state.cubeRefs];
+			newRefs[action.payload.id] = action.payload.ref;
+			return {
+				...state,
+				cubeRefs: newRefs
+			}
+		case 'setSceneRef':
+			return {
+				...state,
+				sceneRef: action.payload
+			}
 
 		/**
 		 * These actions update the state of the keyboard
@@ -69,21 +88,10 @@ export const reducer = (state, action) => {
 				letterKey: action.payload,
 				mainAxis: axis,
 			}
-
-		/**
-		 * These actions used for initializing DOM refs
-		 */
-		case 'setRef':
-			let newRefs = [...state.cubeRefs];
-			newRefs[action.payload.id] = action.payload.ref;
+		case 'changeSkybox':
 			return {
 				...state,
-				cubeRefs: newRefs
-			}
-		case 'setSceneRef':
-			return {
-				...state,
-				sceneRef: action.payload
+				skybox: parseInt(action.payload)
 			}
 
 		/**
@@ -93,24 +101,26 @@ export const reducer = (state, action) => {
 			if (state.moving){
 				let { positions, history } = state;
 				positions = moves[state.letterKey].operation(positions);
+				let newHistory = history.slice();
 				if (!state.undoing){
-					history.push(state.letterKey);
-					console.log('history', history);
+					newHistory.push(state.letterKey);
 				}
 				return {
 					...state,
 					letterKey: null,  // unset move
 					moving: false,    // prevents further animation, and allows next move
 					positions,        // update cubes to new positions,
-					history: history, // save updated history
+					history: newHistory, // save updated history
 					undoing: false    // set undo to false
 				}
 			} else {
 				return state;
 			}
 		
+		/**
+		 * Triggered on Backspace
+		 */
 		case 'undo':
-			console.log('start of undo', state);
 			let { history } = state;
 			if (!state.moving && history.length > 0){
 				let lastMove = history[history.length - 1];
@@ -121,8 +131,6 @@ export const reducer = (state, action) => {
 					undoMove = lastMove.toUpperCase();
 				}
 				let newHistory = history.slice(0, -1);
-				console.log(`undoing with ${undoMove}`);
-				console.log('newHistory', newHistory);
 				let axis = moves[lastMove].mainAxis;
 				return {
 					...state,
@@ -131,6 +139,65 @@ export const reducer = (state, action) => {
 					letterKey: undoMove,
 					mainAxis: axis,
 					history: newHistory
+				}
+			} else {
+				return state;
+			}
+		
+		/** 
+		 * Triggered on Mix button push,
+		 * sets the mix array to a number of moves to perform
+		*/
+		case 'mix':
+			if (!state.moving && !state.mixing){
+				const moves = [
+					'u', 'l', 'f', 'r', 'b', 'd', // clockwise
+					'U', 'L', 'F', 'R', 'B', 'D', // counter clockwise
+					'm', 'M', 'e', 'E', 's', 'S', // slice turns
+				];
+				let newMix = [];
+				for (let i = 0; i < state.mixAmount; i++){
+					let move = moves[Math.floor(Math.random()*moves.length)];
+					newMix.push(move);
+				}
+				return {
+					...state,
+					mixing: true,
+					mix: newMix
+				}
+			} else {
+				return state;
+			}
+
+		/**
+		 * Peforms the next move in the mix array
+		 * will be called in useFrame loop when moving is false
+		 * and mixing is true
+		 */
+		case 'doNextMix':
+			let {mixing, mix, moving} = state;
+			if (moving){
+				return state;
+			}
+			if (mixing){
+				if (mix.length > 0){
+					let nextMix = mix[mix.length - 1];
+					let newMix = mix.slice(0, -1);
+					return {
+						...state,
+						letterKey: nextMix,
+						moving: true,
+						undoing: false,
+						mixing: true,
+						mix: newMix
+					}
+				} else {
+					return {
+						...state,
+						mixing: false,
+						moving: false,
+						undoing: false
+					}
 				}
 			} else {
 				return state;

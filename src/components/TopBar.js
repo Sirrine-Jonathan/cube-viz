@@ -31,7 +31,7 @@ function TopBar(){
 					{
 						
 						Object.keys(state).map(key => {
-							let allowed = [];
+							let allowed = ['skybox'];
 							if (allowed.includes(key)){
 								return (
 									<div>{key}: {JSON.stringify(state[key]) }</div>

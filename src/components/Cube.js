@@ -46,7 +46,8 @@ function Cube(props){
 		if (orange.includes(props.ID)){
 			arr[5] = "orange"
 		}
-		return arr.map(color => <meshLambertMaterial
+		return arr.map((color, index) => <meshLambertMaterial
+			key={index}
 			attachArray="material"
 			color={colorMap[color]}
 			metalness={1}

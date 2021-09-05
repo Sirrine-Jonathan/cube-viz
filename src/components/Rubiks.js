@@ -44,12 +44,14 @@ function Rubiks(){
 
 		// rotate faces with letter keys
 		if (state.moving){
-			rotateFace();
+			rotateFace(degreeIncrement);
+		} else if (state.mixing) {
+			dispatch({ type: 'doNextMix' });
 		}
 	})
 
-	const rotateFace = () => {
-		let newDegCount = degCount + degreeIncrement;
+	const rotateFace = (increment) => {
+		let newDegCount = degCount + increment;
 		// handle situation where degreeIncrement puts newDegCount over or under limit
 		if (newDegCount >= degLimit){
 			let customInc = newDegCount % degLimit;
@@ -59,7 +61,7 @@ function Rubiks(){
 		} else {
 			// carry on like normal
 			setDegCount(newDegCount);
-			performRotateFaceAnimation();
+			performRotateFaceAnimation(increment);
 		}
 	}
 
@@ -130,7 +132,7 @@ function Rubiks(){
 		let pos = generatePositions(offset);
 		return new Array(27).fill('empty').map(
 			(each, index) => (
-				<Cube position={pos[index]} ID={index} />
+				<Cube position={pos[index]} ID={index} key={index} />
 			)
 		);
 	}
