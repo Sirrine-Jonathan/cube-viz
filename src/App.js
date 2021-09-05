@@ -5,7 +5,7 @@ import Scene from './Components/Scene'
 import Rubiks from './Components/Rubiks'
 import TopBar from './Components/TopBar'
 
-const dev = true;
+const dev = false;
 
 function App() {
 
@@ -17,6 +17,10 @@ function App() {
 
 	// global key listeners - on key press
 	const turnKeyOn = (e) => {
+
+		if (e.key === 'Backspace'){
+			dispatch({ type: 'undo' });
+		}
 
 		// arrow keys for rotating the cube
 		if (e.key.includes('Arrow')){
@@ -57,7 +61,29 @@ function App() {
 				<div className="App">
 					{(dev) ? (<TopBar />):null}
 					<header className="App-header">
-						<Scene>
+						<div style={{
+							position: 'absolute', 
+							background: 'rgba(213,213,213,0.5)',
+							padding: '10px 20px',
+							color: '#000',
+							top: 0,
+							left: 0,
+							zIndex: '99999',
+							textAlign: 'center'
+						}}>
+							Rubik's Cube
+							<div style={{
+								fontSize: '10px',
+								letterSpacing: '5px',
+								textTransform: 'uppercase',
+								textAlign: 'center'
+							}}>
+								Visualizer
+							</div>
+						</div>
+						<Scene
+							displayEnvironment={false}
+						>
 							<Rubiks />
 						</Scene>
 					</header>

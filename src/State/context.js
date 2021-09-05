@@ -101,7 +101,7 @@ export const reducer = (state, action) => {
 					letterKey: null,  // unset move
 					moving: false,    // prevents further animation, and allows next move
 					positions,        // update cubes to new positions,
-					history,          // save updated history
+					history: history, // save updated history
 					undoing: false    // set undo to false
 				}
 			} else {
@@ -109,9 +109,10 @@ export const reducer = (state, action) => {
 			}
 		
 		case 'undo':
+			console.log('start of undo', state);
 			if (!state.moving){
 				let { history } = state;
-				console.log(history);
+				console.log('history', history);
 				if (history.length > 0){
 					let move = history.pop();
 					let axis = moves[move].mainAxis;
@@ -120,13 +121,13 @@ export const reducer = (state, action) => {
 					} else if (move === move.toLowerCase()){
 						move = move.toUpperCase();
 					}
-					console.log(move);
+					console.log('undoing with', move, history);
 					return {
 						...state,
 						moving: true,
 						letterKey: move,
 						mainAxis: axis,
-						history,
+						history: history,
 						undoing: true
 					}
 				} else {

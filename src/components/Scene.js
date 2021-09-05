@@ -6,7 +6,12 @@ import { AppDispatchContext, AppStateContext } from '../State/context'
 import ControlDisplay from './ControlDisplay'
 import Environment from './Environment'
 
-function Scene({children, displayControls = false, displayEnvironment = false}){
+function Scene({
+	children,
+	displayControls = false,
+	displayEnvironment = false,
+	displayFloor = false
+}){
 	const v = useContext(AppStateContext);
 	const d = useContext(AppDispatchContext);
 
@@ -45,14 +50,15 @@ function Scene({children, displayControls = false, displayEnvironment = false}){
 					{children}
 					{(displayEnvironment) ? (
 						<Environment />
-					):(<Plane
+					):null}
+					{(displayFloor) ? (<Plane
 						receiveShadow
 						rotation={[-Math.PI / 2, 0, 0]}
 						position={[0, -10, 0]}
 						args={[1000, 1000]}
 					>
 						<meshLambertMaterial attach="material" color="#9e5c4c" />
-					</Plane>)}
+					</Plane>):null}
 					{(displayControls) ? (
 						<ControlDisplay v={v} />
 					):null}
