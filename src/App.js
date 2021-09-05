@@ -45,10 +45,17 @@ function App() {
 		dispatch({ type: e.key, payload: false});
 	}
 
+	const trigger = (key) => {
+		if (!state.moving){
+			dispatch({ type: 'letterKey', 'payload': key });
+		}
+	}
+
 	// attach listeners
 	useEffect(() => {
 		window.addEventListener('keyup', turnKeyOff);
 		window.addEventListener('keydown', turnKeyOn);
+		window.trigger = trigger;
 		return () => {
 			window.removeEventListener('keyup', turnKeyOff);
 			window.removeEventListener('keydown', turnKeyOn);

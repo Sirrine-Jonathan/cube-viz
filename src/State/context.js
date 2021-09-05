@@ -95,6 +95,7 @@ export const reducer = (state, action) => {
 				positions = moves[state.letterKey].operation(positions);
 				if (!state.undoing){
 					history.push(state.letterKey);
+					console.log('history', history);
 				}
 				return {
 					...state,
@@ -110,28 +111,26 @@ export const reducer = (state, action) => {
 		
 		case 'undo':
 			console.log('start of undo', state);
-			if (!state.moving){
-				let { history } = state;
-				console.log('history', history);
-				if (history.length > 0){
-					let move = history.pop();
-					let axis = moves[move].mainAxis;
-					if (move === move.toUpperCase()){
-						move = move.toLowerCase();
-					} else if (move === move.toLowerCase()){
-						move = move.toUpperCase();
-					}
-					console.log('undoing with', move, history);
-					return {
-						...state,
-						moving: true,
-						letterKey: move,
-						mainAxis: axis,
-						history: history,
-						undoing: true
-					}
-				} else {
-					return state;
+			let { history } = state;
+			if (!state.moving && history.length > 0){
+				let lastMove = history[history.length - 1];
+				let undoMove = lastMove;
+				if (lastMove === lastMove.toUpperCase()){
+					undoMove = lastMove.toLowerCase();
+				} else if (lastMove === lastMove.toLowerCase()){
+					undoMove = lastMove.toUpperCase();
+				}
+				let newHistory = history.slice(0, -1);
+				console.log(`undoing with ${undoMove}`);
+				console.log('newHistory', newHistory);
+				let axis = moves[lastMove].mainAxis;
+				return {
+					...state,
+					moving: true,
+					undoing: true,
+					letterKey: undoMove,
+					mainAxis: axis,
+					history: newHistory
 				}
 			} else {
 				return state;
