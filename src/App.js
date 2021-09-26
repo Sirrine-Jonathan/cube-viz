@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useReducer, useMemo, useEffect, useState } from 'react'
+import React, { useReducer, useMemo, useEffect, useState, useRef } from 'react'
 import { AppStateContext, AppDispatchContext, DefaultState, reducer } from './State/context'
 import Scene from './Components/Scene'
 import Rubiks from './Components/Rubiks'
@@ -7,6 +7,8 @@ import TopBar from './Components/TopBar'
 import Title from './Components/Title'
 import Cubemap from './Components/Cubemap'
 import Help from './Components/Help'
+import useGestures from './Hooks/useGestures';
+import useWindowSize from './Hooks/useWindowSize';
 const dev = false;
 
 function App() {
@@ -16,6 +18,10 @@ function App() {
 	const context = useMemo(() => {
 		return {state, dispatch}
 	}, [state, dispatch])
+
+	const padRef = useRef(null);
+	const Gestures = useGestures(padRef);
+	const { windowWidth } = useWindowSize();
 
 	const [showHelp, setShowHelp] = useState(false);
 
@@ -74,10 +80,106 @@ function App() {
 		}
 	})
 
+	
+	useEffect(() => {
+		if (windowWidth <= 800){
+
+			const give_alerts = false;
+			const alertt = (msg) => (give_alerts) ? alert(msg):null;
+			Gestures.subscribe('top-right', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'u' });
+					alertt('top-right');
+				}
+			});
+			Gestures.subscribe('top-left', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'U' });
+					alertt('top-left');
+				}
+			});
+			Gestures.subscribe('bottom-left', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'D' });
+					alertt('bottom-left');
+				}
+			});
+			Gestures.subscribe('bottom-right', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'd' });
+					alertt('bottom-right');
+				}
+			});
+			Gestures.subscribe('left-up', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'L' });
+					alertt('left-up');
+				}
+			});
+			Gestures.subscribe('left-down', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'l' });
+					alertt('left-down');
+				}
+			});
+			Gestures.subscribe('right-up', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'r' });
+					alertt('right-up');
+				}
+			});
+			Gestures.subscribe('right-down', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'R' });
+					alertt('right-down');
+				}
+			});
+			Gestures.subscribe('tap-top-left', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'F' });
+					alertt('tap-top-left');
+				}
+			});
+			Gestures.subscribe('tap-top-right', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'f' });
+					alertt('tap-top-right');
+				}
+			});
+			Gestures.subscribe('tap-bottom-right', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'B' });
+					alertt('tap-bottom-right');
+				}
+			});
+			Gestures.subscribe('tap-bottom-left', () => {
+				if (!state.moving){
+					dispatch({ type: 'letterKey', 'payload': 'b' });
+					alertt('tap-bottom-left');
+				}
+			});
+
+			return () => {
+				Gestures.unsubscribe('top-right');
+				Gestures.unsubscribe('top-left');
+				Gestures.unsubscribe('bottom-left');
+				Gestures.unsubscribe('bottom-right');
+				Gestures.unsubscribe('left-up');
+				Gestures.unsubscribe('left-down');
+				Gestures.unsubscribe('right-up');
+				Gestures.unsubscribe('right-down');
+				Gestures.unsubscribe('tap-top-left');
+				Gestures.unsubscribe('tap-top-right');
+				Gestures.unsubscribe('tap-bottom-right');
+				Gestures.unsubscribe('tap-bottom-left');
+			}
+		}
+	}, [])
+
 	return (
 		<AppStateContext.Provider value={context.state}>
 			<AppDispatchContext.Provider value={context.dispatch}>
-				<div className="App">
+				<div className="App" ref={padRef}>
 					{(dev) ? (<TopBar />):null}
 					<header className="App-header">
 						<Title />

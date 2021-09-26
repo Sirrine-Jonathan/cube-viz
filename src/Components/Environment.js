@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useThree } from 'react-three-fiber'
+import { useThree } from '@react-three/fiber'
 import { CubeTextureLoader } from "three"
 
 function Environment({path = './cube'}) {

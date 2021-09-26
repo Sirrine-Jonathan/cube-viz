@@ -1,0 +1,6 @@
+top-right, top-left:                        u, U => horizontal line on top of screen
+left-up, left-down:                         l, L => vertical line on left side
+clockwise, counter-clockwise:               f, F => circle
+right-up, right-down:                       r, R => vertical line on right side
+clockwise-double, counter-clockwise-double: b, B => circle with two fingers
+bottom-right, bottom-left:                  d, D => horizontal line on bottom of screen

@@ -2,7 +2,7 @@
 import React, { useContext } from 'react'
 import './ColorMaterial'
 import { AppStateContext } from '../State/context'
-import { Html } from 'drei';
+import { Html } from '@react-three/drei';
 import { Math } from 'three'
 
 function Cube(props) {

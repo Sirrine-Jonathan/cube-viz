@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import Cube from './Cube'
-import { useFrame } from 'react-three-fiber'
+import { useFrame } from '@react-three/fiber'
 
 function Face({ offset, space }){
 

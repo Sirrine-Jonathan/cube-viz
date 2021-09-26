@@ -1,4 +1,4 @@
-import { Html } from "drei"
+import { Html } from '@react-three/drei'
 const controlStyle = { 
 	background: 'rgba(14,14,14,0.5)',
 	padding: '20px',

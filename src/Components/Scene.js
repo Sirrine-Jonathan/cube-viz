@@ -1,10 +1,11 @@
 import React, { useContext} from 'react'
-import { Canvas } from 'react-three-fiber'
+import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
-import { Plane, OrbitControls } from "drei"
+import { Plane, OrbitControls } from '@react-three/drei'
 import { AppDispatchContext, AppStateContext } from '../State/context'
 import ControlDisplay from './ControlDisplay'
 import Environment from './Environment'
+import useWindowSize from '../Hooks/useWindowSize';
 
 function Scene({
 	children,
@@ -14,6 +15,7 @@ function Scene({
 }){
 	const v = useContext(AppStateContext);
 	const d = useContext(AppDispatchContext);
+	const { windowWidth } = useWindowSize();
 
 	let skyboxes = Array(10).fill(null);
 	skyboxes[1] = './space';
@@ -35,15 +37,27 @@ function Scene({
 		>
 			<AppStateContext.Provider value={v}>
 				<AppDispatchContext.Provider value={d}>
-					<OrbitControls
-						enableDamping
-						enableZoom={true}
-						enablePan={true}
-						dampingFactor={0.3}
-						rotateSpeed={1.1}
-						minPolarAngle={Math.PI / 3.5}
-						maxPolarAngle={Math.PI / 1.5}
-					/>
+					{ (windowWidth > 20) ? (
+						<OrbitControls
+							enableDamping
+							enableZoom={(windowWidth > 800)}
+							enablePan={(windowWidth > 800)}
+							dampingFactor={0.5}
+							rotateSpeed={(windowWidth > 800) ? 0.8:0.4}
+							onChange={(e) => {
+								//e.target.update();
+								console.log(e);
+								console.log('distance', e.target.getDistance());
+								console.log('polar angle', e.target.getPolarAngle());
+								console.log('azimuthal angle', e.target.getAzimuthalAngle());
+								console.log(e.target.object);
+								console.log('roation_(x,y,z)', `${e.target.object.rotation._x},${e.target.object.rotation._y},${e.target.object.rotation._z}`);
+								console.log('position_(x,y,z)', `${e.target.object.position.x},${e.target.object.position.y},${e.target.object.position.z}`);
+							}}
+							// minPolarAngle={Math.PI / 3.5}
+							// maxPolarAngle={Math.PI / 1.5}
+						/>
+					):null}
 					<ambientLight intensity={0.5}/>
 					<directionalLight
 						intensity={1}

@@ -1,4 +1,4 @@
-import { Html } from 'drei';
+import { Html } from '@react-three/drei';
 import { useContext, useEffect, useRef } from 'react';
 import { AppDispatchContext, AppStateContext } from '../State/context'
 

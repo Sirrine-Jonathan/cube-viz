@@ -1,5 +1,5 @@
 import React, {useRef, useContext, useState, useEffect } from 'react'
-import { useFrame, useThree } from 'react-three-fiber'
+import { useFrame } from '@react-three/fiber'
 import { Vector3, MathUtils, Group } from 'three';
 import { AppStateContext, AppDispatchContext } from '../State/context'
 import { moves } from '../Util/Rotations';

@@ -5,7 +5,7 @@ import { moves } from '../Util/Rotations';
 export const DefaultState = {
 
 	// state of keys
-	skybox: 0,
+	skybox: 1,
 	ArrowDown: false,
 	ArrowUp: false,
 	ArrowLeft: false,
