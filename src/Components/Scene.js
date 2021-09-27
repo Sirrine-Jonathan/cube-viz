@@ -1,4 +1,4 @@
-import React, { useContext} from 'react'
+import React, { useContext, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Plane, OrbitControls } from '@react-three/drei'
@@ -13,13 +13,6 @@ function Scene({
 	displayEnvironment = false,
 	displayFloor = false
 }){
-	const v = useContext(AppStateContext);
-	const d = useContext(AppDispatchContext);
-	const { windowWidth } = useWindowSize();
-
-	let skyboxes = Array(10).fill(null);
-	skyboxes[1] = './space';
-	skyboxes[2] = './cube';
 
 	const onCanvasCreated = ({ gl, scene }) => {
 		gl.toneMapping = THREE.ACESFilmicToneMapping
@@ -27,9 +20,22 @@ function Scene({
 		scene.background = new THREE.Color('#000')
 	}
 
+	const v  = useContext(AppStateContext);
+	const d = useContext(AppDispatchContext);
+	const { windowWidth } = useWindowSize();
+	const sectionRef = useRef(null);
+
+	let skyboxes = Array(10).fill(null);
+	skyboxes[1] = './space';
+	skyboxes[2] = './cube';
+
+	const handleSectionChange = (section) => {
+		d({ type: 'updateSection', 'payload': section });
+	}
+
 	return (
 		<Canvas
-			camera={{ position: [0,4,6], fov: 90, near: 1, far: 60 }}
+			camera={{ position: [0,4,6], fov: 90, near: 1, far: 60, rotation: [0,0,0] }}
 			gl={{ antialias: false, alpha: false }}
 			shadowMap
 			colorManagement
@@ -40,19 +46,32 @@ function Scene({
 					{ (windowWidth > 20) ? (
 						<OrbitControls
 							enableDamping
-							enableZoom={(windowWidth > 800)}
+							enableZoom={(windowWidth > 800) || true}
 							enablePan={(windowWidth > 800)}
 							dampingFactor={0.5}
 							rotateSpeed={(windowWidth > 800) ? 0.8:0.4}
 							onChange={(e) => {
-								//e.target.update();
-								console.log(e);
-								console.log('distance', e.target.getDistance());
-								console.log('polar angle', e.target.getPolarAngle());
-								console.log('azimuthal angle', e.target.getAzimuthalAngle());
-								console.log(e.target.object);
-								console.log('roation_(x,y,z)', `${e.target.object.rotation._x},${e.target.object.rotation._y},${e.target.object.rotation._z}`);
-								console.log('position_(x,y,z)', `${e.target.object.position.x},${e.target.object.position.y},${e.target.object.position.z}`);
+								let azi = e.target.getAzimuthalAngle();
+								
+								const total = Math.PI * 2;
+
+								// get the offset
+								const section_width = Math.PI * 2 / 4;
+								let offset = section_width / 2;
+								let azi_adj = azi + Math.PI + offset;
+
+								// wrap
+								let azi_adj_wrap;
+								if (azi_adj - Math.PI < 0){
+									azi_adj_wrap = total - Math.PI + azi_adj;
+								} else {
+									azi_adj_wrap = azi_adj - Math.PI;
+								}
+								const section = Math.floor(azi_adj_wrap / section_width);
+								if (sectionRef.current === null || section != sectionRef.current){
+									sectionRef.current = section;
+									handleSectionChange(section);
+								}
 							}}
 							// minPolarAngle={Math.PI / 3.5}
 							// maxPolarAngle={Math.PI / 1.5}
@@ -72,10 +91,10 @@ function Scene({
 					{(displayFloor) ? (<Plane
 						receiveShadow
 						rotation={[-Math.PI / 2, 0, 0]}
-						position={[0, -10, 0]}
+						position={[0, -20, 0]}
 						args={[1000, 1000]}
 					>
-						<meshLambertMaterial attach="material" color="#9e5c4c" />
+						<meshPhongMaterial attach="material" color="#9e5c4c" />
 					</Plane>):null}
 					{(displayControls) ? (
 						<ControlDisplay v={v} />

@@ -33,7 +33,54 @@ export const DefaultState = {
 		21,22,23,
 		24,25,26
 	],
-	history: []
+	history: [],
+	section: null,
+	moveMap: {
+		0: {
+			'u': 'u',
+			'l': 'l',
+			'f': 'f',
+			'r': 'r',
+			'b': 'b',
+			'd': 'd',
+			'm': 'm',
+			'e': 'e',
+			's': 's',
+		},
+		1: {
+			'u': 'u',
+			'l': 'l',
+			'f': 'f',
+			'r': 'r',
+			'b': 'b',
+			'd': 'd',
+			'm': 'm',
+			'e': 'e',
+			's': 's',
+		},
+		2: {
+			'u': 'u',
+			'l': 'l',
+			'f': 'f',
+			'r': 'r',
+			'b': 'b',
+			'd': 'd',
+			'm': 'm',
+			'e': 'e',
+			's': 's',
+		},
+		3: {
+			'u': 'u',
+			'l': 'l',
+			'f': 'f',
+			'r': 'r',
+			'b': 'b',
+			'd': 'd',
+			'm': 'm',
+			'e': 'e',
+			's': 's',
+		}
+	}
 }
 
 
@@ -216,6 +263,9 @@ export const reducer = (state, action) => {
 				rotations: newRotations
 			}
 
+		case 'updateSection':
+			console.log('section in context', action.payload);
+			return state;
 	}
 	return state;
 }

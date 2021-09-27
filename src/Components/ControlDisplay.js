@@ -5,7 +5,7 @@ const controlStyle = {
 	borderRadius: '2px',
 	width: '500px'
 }
-const ControlDisplay = ({v}) => {
+const ControlDisplay = ({state}) => {
 	{/*
 		'u', 'l', 'f', 'r', 'b', 'd', // clockwise
 		'U', 'L', 'F', 'R', 'B', 'D', // counter clockwise
@@ -31,9 +31,9 @@ const ControlDisplay = ({v}) => {
 				</table>
 			</div>
 			<div style={controlStyle}>
-				<div>Position: {v.positions.indexOf(0)}</div>
-				<div>Rotations: [{v.cubeRotations[0][0]}, {v.cubeRotations[0][1]}, {v.cubeRotations[0][2]}]</div>
-				<div>Axis Adjs: [{v.cubeAxelMapping[0][0]}, {v.cubeAxelMapping[0][1]}, {v.cubeAxelMapping[0][2]}]</div>
+				<div>Position: {state.positions.indexOf(0)}</div>
+				<div>Rotations: [{state.cubeRotations[0][0]}, {state.cubeRotations[0][1]}, {state.cubeRotations[0][2]}]</div>
+				<div>Axis Adjs: [{state.cubeAxelMapping[0][0]}, {state.cubeAxelMapping[0][1]}, {state.cubeAxelMapping[0][2]}]</div>
 			</div>
 		</Html>
 	)

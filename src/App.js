@@ -187,6 +187,7 @@ function App() {
 						<Help show={showHelp} />
 						<Scene
 							displayEnvironment={true}
+							displayFloor={false}
 						>
 							<Rubiks />
 						</Scene>

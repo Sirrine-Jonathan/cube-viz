@@ -65,6 +65,8 @@ function Rubiks(){
 		}
 	}
 
+	const rotateCube = ()
+
 	const shouldAttach = (each, index) => {
 		let relevantPositions = moves[state.letterKey.toLowerCase()].positions;
 		let relevantCubes = relevantPositions.map(pos => {
@@ -144,7 +146,7 @@ function Rubiks(){
 	}, [dispatch])
 
 	return (
-		<group ref={block} position={[0,0,0]} rotation={[0.1,-0.6,0]}>
+		<group ref={block} position={[0,0,0]} rotation={[0,0,0]/*[0.1,-0.6,0]*/}>
 			{ getCubes(space) }
 		</group>
 	)
