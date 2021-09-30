@@ -2,14 +2,12 @@ import './App.css';
 import React, { useReducer, useMemo, useEffect, useState, useRef } from 'react'
 import { AppStateContext, AppDispatchContext, DefaultState, reducer } from './State/context'
 import Scene from './Components/Scene'
-import Rubiks from './Components/Rubiks'
-import TopBar from './Components/TopBar'
 import Title from './Components/Title'
 import Cubemap from './Components/Cubemap'
 import Help from './Components/Help'
 import useGestures from './Hooks/useGestures';
 import useWindowSize from './Hooks/useWindowSize';
-const dev = false;
+import Rubiks from './Components/Rubiks'
 
 function App() {
 
@@ -28,6 +26,7 @@ function App() {
 	// global key listeners - on key press
 	const turnKeyOn = (e) => {
 
+		// setup keys for undo function
 		if (e.key === 'Backspace'){
 			dispatch({ type: 'undo' });
 		}
@@ -43,15 +42,18 @@ function App() {
 			'U', 'L', 'F', 'R', 'B', 'D', // counter clockwise
 			'm', 'M', 'e', 'E', 's', 'S', // slice turns
 		];
+
+		// hook in dispatch to letters
 		if (letterKeys.includes(e.key)){
 			if (!state.moving){
-				dispatch({ type: 'letterKey', 'payload': e.key });
+				dispatch({ type: 'letterKey', payload: e.key });
 			}
 		}
 
+		// include support for changing skybox view number keys
 		const numbers = '0123456789'.split('');
 		if (numbers.includes(e.key)){
-			dispatch({ type: 'changeSkybox', 'payload': e.key });
+			dispatch({ type: 'changeSkybox', payload: e.key });
 		}
 	}
 
@@ -63,22 +65,17 @@ function App() {
 		}
 	}
 
-	const trigger = (key) => {
-		if (!state.moving){
-			dispatch({ type: 'letterKey', 'payload': key });
-		}
-	}
-
 	// attach listeners
 	useEffect(() => {
-		window.addEventListener('keyup', turnKeyOff);
-		window.addEventListener('keydown', turnKeyOn);
-		window.trigger = trigger;
-		return () => {
-			window.removeEventListener('keyup', turnKeyOff);
-			window.removeEventListener('keydown', turnKeyOn);
+		if (windowWidth > 800){
+			window.addEventListener('keyup', turnKeyOff);
+			window.addEventListener('keydown', turnKeyOn);
+			return () => {
+				window.removeEventListener('keyup', turnKeyOff);
+				window.removeEventListener('keydown', turnKeyOn);
+			}
 		}
-	})
+	}, [windowWidth])
 
 	
 	useEffect(() => {
@@ -88,73 +85,73 @@ function App() {
 			const alertt = (msg) => (give_alerts) ? alert(msg):null;
 			Gestures.subscribe('top-right', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'u' });
+					dispatch({ type: 'letterKey', payload: 'u' });
 					alertt('top-right');
 				}
 			});
 			Gestures.subscribe('top-left', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'U' });
+					dispatch({ type: 'letterKey', payload: 'U' });
 					alertt('top-left');
 				}
 			});
 			Gestures.subscribe('bottom-left', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'D' });
+					dispatch({ type: 'letterKey', payload: 'D' });
 					alertt('bottom-left');
 				}
 			});
 			Gestures.subscribe('bottom-right', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'd' });
+					dispatch({ type: 'letterKey', payload: 'd' });
 					alertt('bottom-right');
 				}
 			});
 			Gestures.subscribe('left-up', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'L' });
+					dispatch({ type: 'letterKey', payload: 'L' });
 					alertt('left-up');
 				}
 			});
 			Gestures.subscribe('left-down', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'l' });
+					dispatch({ type: 'letterKey', payload: 'l' });
 					alertt('left-down');
 				}
 			});
 			Gestures.subscribe('right-up', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'r' });
+					dispatch({ type: 'letterKey', payload: 'r' });
 					alertt('right-up');
 				}
 			});
 			Gestures.subscribe('right-down', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'R' });
+					dispatch({ type: 'letterKey', payload: 'R' });
 					alertt('right-down');
 				}
 			});
 			Gestures.subscribe('tap-top-left', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'F' });
+					dispatch({ type: 'letterKey', payload: 'F' });
 					alertt('tap-top-left');
 				}
 			});
 			Gestures.subscribe('tap-top-right', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'f' });
+					dispatch({ type: 'letterKey', payload: 'f' });
 					alertt('tap-top-right');
 				}
 			});
 			Gestures.subscribe('tap-bottom-right', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'B' });
+					dispatch({ type: 'letterKey', payload: 'B' });
 					alertt('tap-bottom-right');
 				}
 			});
 			Gestures.subscribe('tap-bottom-left', () => {
 				if (!state.moving){
-					dispatch({ type: 'letterKey', 'payload': 'b' });
+					dispatch({ type: 'letterKey', payload: 'b' });
 					alertt('tap-bottom-left');
 				}
 			});
@@ -180,7 +177,6 @@ function App() {
 		<AppStateContext.Provider value={context.state}>
 			<AppDispatchContext.Provider value={context.dispatch}>
 				<div className="App" ref={padRef}>
-					{(dev) ? (<TopBar />):null}
 					<header className="App-header">
 						<Title />
 						<Cubemap />
@@ -188,6 +184,10 @@ function App() {
 						<Scene
 							displayEnvironment={true}
 							displayFloor={false}
+							onSectionChange={(section) => {
+								console.log('section changed to ', section);
+								//dispatch({type: 'updateSection', payload: section});
+							}}
 						>
 							<Rubiks />
 						</Scene>

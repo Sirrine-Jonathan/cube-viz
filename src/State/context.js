@@ -34,51 +34,47 @@ export const DefaultState = {
 		24,25,26
 	],
 	history: [],
-	section: null,
+	section: 0,
 	moveMap: {
 		0: {
-			'u': 'u',
-			'l': 'l',
 			'f': 'f',
 			'r': 'r',
 			'b': 'b',
-			'd': 'd',
+			'l': 'l',
+			
 			'm': 'm',
-			'e': 'e',
 			's': 's',
+			'e': 'e',
 		},
 		1: {
-			'u': 'u',
-			'l': 'l',
-			'f': 'f',
-			'r': 'r',
-			'b': 'b',
-			'd': 'd',
-			'm': 'm',
-			'e': 'e',
-			's': 's',
+			'l': 'f',
+			'f': 'r',
+			'r': 'b',
+			'b': 'l',
+
+			'm': 's',
+			's': 'e',
+			'e': 's',
 		},
 		2: {
-			'u': 'u',
-			'l': 'l',
-			'f': 'f',
-			'r': 'r',
-			'b': 'b',
-			'd': 'd',
+			'f': 'b',
+			'r': 'l',
+			'b': 'f',
+			'l': 'r',
+
 			'm': 'm',
-			'e': 'e',
 			's': 's',
+			'e': 'e',
 		},
 		3: {
-			'u': 'u',
-			'l': 'l',
-			'f': 'f',
-			'r': 'r',
-			'b': 'b',
-			'd': 'd',
+			'f': 'l',
+			'r': 'f',
+			'b': 'r',
+			'l': 'b',
+
 			'm': 'm',
-			'e': 'e',
 			's': 's',
+			'e': 'e',
 		}
 	}
 }
@@ -128,11 +124,19 @@ export const reducer = (state, action) => {
 				[action.type]: action.payload
 			};
 		case 'letterKey':
+			if (state.moving) return state;
 			let axis = moves[action.payload].mainAxis;
+			let letterKey= action.payload;
+			let isUpperCase = (action.payload === action.payload.toUpperCase());
+			let moveMapKey = action.payload.toLowerCase();
+			if (state.moveMap[state.section][moveMapKey]){
+				let letterKeyAdj = state.moveMap[state.section][moveMapKey];
+				letterKey = (isUpperCase) ? letterKeyAdj.toUpperCase():letterKeyAdj.toLowerCase();
+			}
 			return {
 				...state,
 				moving: true,
-				letterKey: action.payload,
+				letterKey: letterKey,
 				mainAxis: axis,
 			}
 		case 'changeSkybox':
@@ -264,8 +268,10 @@ export const reducer = (state, action) => {
 			}
 
 		case 'updateSection':
-			console.log('section in context', action.payload);
-			return state;
+			return {
+				...state,
+				section: action.payload
+			}
 	}
 	return state;
 }

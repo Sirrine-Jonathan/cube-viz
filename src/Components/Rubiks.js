@@ -4,8 +4,9 @@ import { Vector3, MathUtils, Group } from 'three';
 import { AppStateContext, AppDispatchContext } from '../State/context'
 import { moves } from '../Util/Rotations';
 import Cube from './Cube'
+import useWindowSize from '../Hooks/useWindowSize';
 
-function Rubiks(){
+const Rubiks = () => {
 
 	const block = useRef();
 	const degLimit = 90;
@@ -16,7 +17,7 @@ function Rubiks(){
 
 	// internal state
 	const [degCount, setDegCount] = useState(0);
-	const [space, setSpace] = useState(0.05);
+	const space = useRef(0.05);
 
 	// config
 	const speed = 0.05;
@@ -27,8 +28,8 @@ function Rubiks(){
 		Looks for changes to keyboard and makes changes
 	*/
 	useFrame(() => {
-		
 		// whole cube rotation with arrow keys
+		const { section } = state;
 		if (state.ArrowLeft){
 			block.current.rotation.y = block.current.rotation.y -= speed
 		}
@@ -52,6 +53,7 @@ function Rubiks(){
 
 	const rotateFace = (increment) => {
 		let newDegCount = degCount + increment;
+
 		// handle situation where degreeIncrement puts newDegCount over or under limit
 		if (newDegCount >= degLimit){
 			let customInc = newDegCount % degLimit;
@@ -59,6 +61,7 @@ function Rubiks(){
 			dispatch({ type: 'endMove' });
 			performRotateFaceAnimation(customInc);
 		} else {
+
 			// carry on like normal
 			setDegCount(newDegCount);
 			performRotateFaceAnimation(increment);
@@ -139,14 +142,16 @@ function Rubiks(){
 
 	useEffect(() => {
 		if (typeof dispatch === "function"){
-			dispatch({ type: 'setSceneRef', payload: block })
+			dispatch({ type: 'setSceneRef', payload: block });
 		}
 	}, [dispatch])
 
 	return (
-		<group ref={block} position={[0,0,0]} rotation={[0,0,0]/*[0.1,-0.6,0]*/}>
-			{ getCubes(space) }
-		</group>
+		<>
+			<group ref={block} position={[0,0,0]} rotation={[0,0,0]/*[0.1,-0.6,0]*/}>
+				{ getCubes(space.current) }
+			</group>
+		</>
 	)
 }
 
